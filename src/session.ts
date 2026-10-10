@@ -19,7 +19,7 @@ interface Pending {
 }
 
 const PERMISSION_HINT =
-  'O Antigravity negou uma ação por falta de permissão. Libere-a com uma regra permissions.allow no settings do agy.';
+  'O Antigravity negou alguma ação por falta de permissão. Isso não garante que nada foi alterado: revise as mudanças (git diff). Para liberar a ação, use uma regra permissions.allow no settings do agy.';
 
 class TimeoutError extends Error {}
 

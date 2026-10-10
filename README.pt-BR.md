@@ -28,7 +28,9 @@ Para remover: `claude mcp remove antigravity-connector`.
 - `status` — lista as sessões vivas.
 
 ## Permissões
-No modo de streaming o `agy` **não consegue pedir aprovação**: ele nega sozinho o que exigir permissão, e o conector devolve `PERMISSION_DENIED`. Por padrão, portanto, o conector **só lê**. Para liberar escrita ou comandos, crie regras `permissions.allow` nas configurações do `agy`. O conector nunca usa `--dangerously-skip-permissions`.
+O que o `agy` pode fazer é decidido pelas **suas configurações e permissões já existentes no `agy`, não por este conector**. No modo de streaming ele não consegue pedir aprovação: nega sozinho o que exigir permissão, e o conector devolve `PERMISSION_DENIED`.
+
+**`PERMISSION_DENIED` significa "alguma ação foi negada", não "nada mudou".** Nos nossos testes o `agy` teve uma escrita negada e mesmo assim criou o arquivo por outro caminho, e ele escreve onde as permissões que você já deu permitirem. Trate toda tarefa delegada como se pudesse escrever: use um repositório Git e revise as mudanças (`git diff`) antes de aceitar. O conector nunca usa `--dangerously-skip-permissions`.
 
 ## Segurança
 Sem porta de rede (só stdio), sem `shell: true`, prompts e respostas nunca vão para log, erros devolvidos são genéricos com `correlationId`, e a árvore de processos é encerrada em timeout, falha, `reset` e desligamento.

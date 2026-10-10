@@ -54,9 +54,11 @@ To remove it: `claude mcp remove antigravity-connector`.
 
 ## Permissions (read this)
 
-In streaming mode `agy` **cannot ask for approval**. It auto-denies anything that needs permission and reports it, which this connector surfaces as `PERMISSION_DENIED`. So by default the connector is **read-only**.
+What `agy` may do is decided by **your `agy` permission settings and existing grants, not by this connector**. In streaming mode `agy` cannot ask for approval: it auto-denies what needs permission and reports it, which the connector surfaces as `PERMISSION_DENIED`.
 
-To let `agy` write files or run commands, add `permissions.allow` rules to your `agy` settings (for example `write_file(<target>)`). The connector never passes `--dangerously-skip-permissions`.
+**`PERMISSION_DENIED` means "some action was denied", not "nothing changed".** In our tests `agy` sometimes had a write denied and still created the file through another path, and it can write wherever your existing grants allow. Treat every delegated task as potentially writing: use a Git repository and review the changes (`git diff`) before accepting them.
+
+To tighten or loosen access, edit `permissions` in your `agy` settings (paths are written with `/` and without the drive letter). The connector never passes `--dangerously-skip-permissions`.
 
 ## Configuration
 

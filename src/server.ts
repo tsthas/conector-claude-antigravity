@@ -27,7 +27,7 @@ export function createServer(pool: SessionPool): McpServer {
     'ask',
     {
       description:
-        'Envia um prompt ao Google Antigravity (agy), mantendo o processo vivo por projeto (turnos seguintes ~4 s). cwd deve ser absoluto. Escrita de arquivos só funciona se o agy tiver regras permissions.allow.',
+        'Envia um prompt ao Google Antigravity (agy), mantendo o processo vivo por projeto (turnos seguintes ~4 s). cwd deve ser absoluto. As ações permitidas dependem das permissões do agy; PERMISSION_DENIED não garante que nada foi alterado, então revise as mudanças (git diff).',
       inputSchema: AskInput.shape,
     },
     async (args) => {
