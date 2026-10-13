@@ -56,9 +56,20 @@ To remove it: `claude mcp remove antigravity-connector`.
 
 What `agy` may do is decided by **your `agy` permission settings and existing grants, not by this connector**. In streaming mode `agy` cannot ask for approval: it auto-denies what needs permission and reports it, which the connector surfaces as `PERMISSION_DENIED`.
 
-**`PERMISSION_DENIED` means "some action was denied", not "nothing changed".** In our tests `agy` sometimes had a write denied and still created the file through another path, and it can write wherever your existing grants allow. Treat every delegated task as potentially writing: use a Git repository and review the changes (`git diff`) before accepting them.
+**`PERMISSION_DENIED` means "some action was denied"** (the denied action names are returned in `deniedActions`, e.g. `write_file`, `command`). A turn can still produce a useful answer or partial changes, so use a Git repository and review changes (`git diff`) before accepting them. Note that the OS temp directory may be writable without any rule.
 
-To tighten or loosen access, edit `permissions` in your `agy` settings (paths are written with `/` and without the drive letter). The connector never passes `--dangerously-skip-permissions`.
+Example `agy` settings (`~/.gemini/antigravity-cli/settings.json`) allowing writes only under one folder and blocking sensitive files. On Windows, in our tests the rule had to be written with the drive letter and backslashes, exactly as in the error message `agy` prints; check yours against that message:
+
+```json
+{
+  "permissions": {
+    "allow": ["write_file(C:\\Users\\you\\projects\\)"],
+    "deny": ["write_file(.git/)", "write_file(.env)", "command(sudo)", "command(rm -rf)"]
+  }
+}
+```
+
+The connector never passes `--dangerously-skip-permissions`.
 
 ## Configuration
 

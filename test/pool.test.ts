@@ -76,7 +76,10 @@ describe('SessionPool', () => {
     const d = await ask(cwd, 'DENY');
     expect(d.status).toBe('PERMISSION_DENIED');
     expect(d.error).toContain('permissions.allow');
+    expect(d.deniedActions).toEqual(['write_file']);
+    expect(d.error).toContain('write_file');
     const ok = await ask(cwd, 'depois');
+    expect(ok.deniedActions).toEqual([]);
     expect(ok.status).toBe('SUCCESS');
     expect(ok.reusedSession).toBe(true);
   });

@@ -36,7 +36,9 @@ Example `result`:
 
 `permission_mode` is `request-review`, but headless streaming **has no approval channel**: a tool that needs permission is auto-denied. The tool step reports a `TOOL_ERROR` (`permission check failed …`), the turn still ends with `status: SUCCESS`, and the denial is listed in `result.denied_actions`. Grant access through `permissions.allow` rules in the agy settings, or (not recommended) `--dangerously-skip-permissions`.
 
-**A denial does not guarantee nothing was written.** In testing, a turn that reported `denied_actions` for `write_file` still ended with the file created (the agent fell back to another tool, or pre-existing grants applied). Always verify side effects independently (e.g. `git diff`). Rule targets are normalized by agy (drive letter stripped, `\` → `/`), so write rules with forward slashes and no drive letter; a rule in the wrong form may not restrict what you expect.
+**Rule matching (observed, Windows, agy 1.3.4).** The denial message prints the target as a Windows path (`C:\Users\…\file.txt`), and an `allow` rule written the same way (`write_file(C:\\Users\\…\\folder\\)` in JSON) matched; a rule written in the `/Users/…` form did not. The OS temp directory was writable without any rule. Verify your own rules with a throwaway folder, using unique file names per run (leftover files from earlier runs give false results). The docs describe path normalization, so this may differ across versions.
+
+Always verify side effects independently (e.g. `git diff`): a turn can report `denied_actions` and still have produced partial output.
 
 ## Timing
 

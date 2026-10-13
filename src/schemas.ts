@@ -16,6 +16,8 @@ export const AskOutput = z.object({
   conversationId: z.string(),
   status: AskStatus,
   error: z.string().optional(),
+  /** Ações que o agy negou no turno (ex.: write_file, command); vazio se nenhuma. */
+  deniedActions: z.array(z.string()),
   durationMs: z.number(),
   reusedSession: z.boolean(),
   correlationId: z.string(),

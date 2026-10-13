@@ -18,8 +18,10 @@ interface Pending {
   reject: (e: Error) => void;
 }
 
-const PERMISSION_HINT =
-  'O Antigravity negou alguma ação por falta de permissão. Isso não garante que nada foi alterado: revise as mudanças (git diff). Para liberar a ação, use uma regra permissions.allow no settings do agy.';
+const permissionHint = (actions: string[]): string =>
+  `O Antigravity negou ação(ões) por falta de permissão: ${actions.join(', ')}. ` +
+  'Isso não garante que nada foi alterado: revise as mudanças (git diff). ' +
+  'Para liberar, use uma regra permissions.allow no settings do agy (ex.: write_file(<pasta>) ou command(<comando>)).';
 
 class TimeoutError extends Error {}
 
@@ -111,6 +113,7 @@ export class AgySession {
       conversationId: this.conversationId ?? '',
       status,
       error,
+      deniedActions: [],
       durationMs: Date.now() - t0,
       reusedSession,
       correlationId,
@@ -146,17 +149,19 @@ export class AgySession {
         child.stdin.write(encodeUserMessage(prompt));
       });
 
+      const deniedActions = [...new Set(result.deniedActions)];
       const base = {
         response: result.response,
         conversationId: result.conversationId,
+        deniedActions,
         durationMs: Date.now() - t0,
         reusedSession,
         correlationId,
       };
       if (result.status === 'ERROR')
         return { ...base, status: 'ERROR', error: `Falha no agy (ref ${correlationId}).` };
-      if (result.deniedActions.length > 0)
-        return { ...base, status: 'PERMISSION_DENIED', error: PERMISSION_HINT };
+      if (deniedActions.length > 0)
+        return { ...base, status: 'PERMISSION_DENIED', error: permissionHint(deniedActions) };
       return { ...base, status: 'SUCCESS' };
     } catch (err) {
       const timedOut = err instanceof TimeoutError;

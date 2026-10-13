@@ -30,7 +30,9 @@ Para remover: `claude mcp remove antigravity-connector`.
 ## Permissões
 O que o `agy` pode fazer é decidido pelas **suas configurações e permissões já existentes no `agy`, não por este conector**. No modo de streaming ele não consegue pedir aprovação: nega sozinho o que exigir permissão, e o conector devolve `PERMISSION_DENIED`.
 
-**`PERMISSION_DENIED` significa "alguma ação foi negada", não "nada mudou".** Nos nossos testes o `agy` teve uma escrita negada e mesmo assim criou o arquivo por outro caminho, e ele escreve onde as permissões que você já deu permitirem. Trate toda tarefa delegada como se pudesse escrever: use um repositório Git e revise as mudanças (`git diff`) antes de aceitar. O conector nunca usa `--dangerously-skip-permissions`.
+**`PERMISSION_DENIED` significa "alguma ação foi negada"** (os nomes das ações negadas vêm em `deniedActions`, por exemplo `write_file` e `command`). Mesmo assim o turno pode ter resposta útil ou mudanças parciais: use um repositório Git e revise (`git diff`) antes de aceitar. A pasta temporária do sistema pode aceitar escrita sem regra nenhuma.
+
+Para liberar escrita só numa pasta, use `permissions.allow` em `~/.gemini/antigravity-cli/settings.json`. No Windows, nos nossos testes, a regra precisou ser escrita com a letra do drive e barras invertidas, exatamente como na mensagem de erro que o `agy` mostra. O conector nunca usa `--dangerously-skip-permissions`.
 
 ## Segurança
 Sem porta de rede (só stdio), sem `shell: true`, prompts e respostas nunca vão para log, erros devolvidos são genéricos com `correlationId`, e a árvore de processos é encerrada em timeout, falha, `reset` e desligamento.
